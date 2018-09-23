@@ -23,8 +23,11 @@ handler = WebhookHandler('LINE_CHANNEL_SECRET')
 
 @app.route("/callback", methods=['POST'])
 def callback():
+    app.logger.info("post: ")
+
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
+    app.logger.info("Request signature: " + signature)
 
     # get request body as text
     body = request.get_data(as_text=True)
