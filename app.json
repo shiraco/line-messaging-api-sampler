@@ -1,0 +1,20 @@
+{
+    "name": "line-messaging-api-sampler",
+    "description": "line-messaging-api-sampler",
+    "website": "https://github.com/shiraco/line-messaging-api-sampler",
+    "repository": "https://github.com/shiraco/line-messaging-api-sampler",
+    "keywords": [
+        "python"
+    ],
+    "success_url": "/",
+    "env": {
+      "LINE_CHANNEL_ACCESS_TOKEN": {
+          "description": "LINE Channel Access Token",
+          "required": true
+      },
+      "LINE_CHANNEL_SECRET": {
+          "description": "LINE Channel Access Secret",
+          "required": true
+      }
+    }
+}
