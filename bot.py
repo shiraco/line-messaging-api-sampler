@@ -18,16 +18,17 @@ from linebot.models import (
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi('LINE_CHANNEL_ACCESS_TOKEN')
-handler = WebhookHandler('LINE_CHANNEL_SECRET')
+line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
+@app.route("/")
+def hello_world():
+    return "hello world!"
 
 @app.route("/callback", methods=['POST'])
 def callback():
-    app.logger.info("post: ")
-
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
-    app.logger.info("Request signature: " + signature)
 
     # get request body as text
     body = request.get_data(as_text=True)
@@ -44,10 +45,13 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+
+    app.logger.debug("event: " + str(event))
+
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
