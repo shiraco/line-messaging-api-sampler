@@ -16,9 +16,12 @@ from linebot.exceptions import (
     LineBotApiError
 )
 from linebot.models import (
+    FollowEvent,
     MessageEvent,
     TextMessage, TextSendMessage,
-    StickerMessage, StickerSendMessage
+    StickerMessage, StickerSendMessage,
+    RichMenu, RichMenuBounds, RichMenuArea, RichMenuSize,
+    URIAction
 )
 
 app = Flask(__name__)
@@ -46,6 +49,31 @@ def callback():
         abort(400)
 
     return 'OK'
+
+@handler.add(FollowEvent)
+def handle_follow(event):
+
+    app.logger.debug("event: " + str(event))
+
+    rich_menu_to_create = RichMenu(
+        size=RichMenuSize(width=2500, height=1686),
+        selected=False,
+        name="Nice richmenu",
+        chat_bar_text="Tap here",
+        areas=[RichMenuArea(bounds=RichMenuBounds(x=0, y=0, width=2500, height=1686),
+                            action=URIAction(label='Go to line.me', uri='https://line.me'))]
+        )
+    rich_menu_id = line_bot_api.create_rich_menu(rich_menu=rich_menu_to_create)
+
+    path = './rich_menu.jpg'
+    content_type = 'image/jpeg'
+    with open(path, 'rb') as f:
+        line_bot_api.set_rich_menu_image(rich_menu_id, content_type, f)
+
+    line_bot_api.link_rich_menu_to_user('all', rich_menu_id)
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text="follow"))
 
 
 @handler.add(MessageEvent, message=TextMessage)
