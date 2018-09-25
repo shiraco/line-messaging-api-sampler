@@ -24,6 +24,9 @@ from linebot.models import (
     URIAction
 )
 
+from dialog import Dialog
+
+
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
@@ -81,9 +84,8 @@ def handle_message(event):
 
     app.logger.debug("event: " + str(event))
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text))
+    sending_message = Dialog().dialog(event.message, event.source.sender_id)
+    line_bot_api.reply_message(event.reply_token, sending_message)
 
 
 @handler.add(MessageEvent, message=StickerMessage)
