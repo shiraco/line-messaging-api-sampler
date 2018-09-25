@@ -25,7 +25,7 @@ class Dialog(object):
             sending_message = TemplateSendMessage(
                 alt_text='Buttons template',
                 template=ButtonsTemplate(
-                    thumbnail_image_url='https://example.com/image.jpg',
+                    thumbnail_image_url='https://placehold.jp/565656/151x100.png',
                     title='Menu',
                     text='Please select',
                     actions=[
@@ -65,13 +65,38 @@ class Dialog(object):
                 )
             )
 
+        elif '画像カルーセルテンプレート' in received_message:
+            sending_message = TemplateSendMessage(
+                alt_text='ImageCarousel template',
+                template=ImageCarouselTemplate(
+                    columns=[
+                        ImageCarouselColumn(
+                            image_url='https://placehold.jp/ababab/150x150.png',
+                            action=PostbackAction(
+                                label='postback1',
+                                text='postback text1',
+                                data='action=buy&itemid=1'
+                            )
+                        ),
+                        ImageCarouselColumn(
+                            image_url='https://placehold.jp/565656/150x150.png',
+                            action=PostbackAction(
+                                label='postback2',
+                                text='postback text2',
+                                data='action=buy&itemid=2'
+                            )
+                        )
+                    ]
+                )
+            )
+
         elif 'カルーセルテンプレート' in received_message:
             sending_message = TemplateSendMessage(
                 alt_text='Carousel template',
                 template=CarouselTemplate(
                     columns=[
                         CarouselColumn(
-                            thumbnail_image_url='https://example.com/item1.jpg',
+                            thumbnail_image_url='https://placehold.jp/ababab/100x151.png',
                             title='this is menu1',
                             text='description1',
                             actions=[
@@ -91,7 +116,7 @@ class Dialog(object):
                             ]
                         ),
                         CarouselColumn(
-                            thumbnail_image_url='https://example.com/item2.jpg',
+                            thumbnail_image_url='https://placehold.jp/565656/100x151.png',
                             title='this is menu2',
                             text='description2',
                             actions=[
@@ -109,31 +134,6 @@ class Dialog(object):
                                     uri='http://example.com/2'
                                 )
                             ]
-                        )
-                    ]
-                )
-            )
-
-        elif '画像カルーセルテンプレート' in received_message:
-            sending_message = TemplateSendMessage(
-                alt_text='ImageCarousel template',
-                template=ImageCarouselTemplate(
-                    columns=[
-                        ImageCarouselColumn(
-                            image_url='https://example.com/item1.jpg',
-                            action=PostbackAction(
-                                label='postback1',
-                                text='postback text1',
-                                data='action=buy&itemid=1'
-                            )
-                        ),
-                        ImageCarouselColumn(
-                            image_url='https://example.com/item2.jpg',
-                            action=PostbackAction(
-                                label='postback2',
-                                text='postback text2',
-                                data='action=buy&itemid=2'
-                            )
                         )
                     ]
                 )
