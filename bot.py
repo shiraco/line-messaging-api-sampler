@@ -5,6 +5,7 @@ LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', '')
 LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', '')
 
 import json
+import base64
 
 from flask import Flask, request, abort
 
@@ -17,6 +18,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
     FollowEvent,
+    AccountLinkEvent,
     MessageEvent,
     TextMessage, TextSendMessage,
     StickerMessage, StickerSendMessage,
@@ -78,6 +80,19 @@ def handle_follow(event):
         event.reply_token,
         TextSendMessage(text="follow"))
 
+@handler.add(AccountLinkEvent)
+def handle_account_link(event):
+
+    app.logger.debug("event: " + str(event))
+
+    if event.link.result == 'ok':
+        nonce = event.link.nonce
+        secure_token = base64.urlsafe_b64decode(nonce)
+        dp_user_id = secure_token
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text="logged in as {} {}".format(dp_user_id, event.source.sender_id)))
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
