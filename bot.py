@@ -10,7 +10,10 @@ import base64
 from flask import Flask, request, abort
 
 from linebot import (
-    LineBotApi, WebhookHandler
+    WebhookHandler
+)
+from line.line_api import (
+    LineBotLinkApi as LineBotApi
 )
 from linebot.exceptions import (
     InvalidSignatureError,
@@ -87,19 +90,23 @@ def handle_account_link(event):
 
     if event.link.result == 'ok':
         nonce = event.link.nonce
-        secure_token = base64.urlsafe_b64decode(nonce)
-        dp_user_id = secure_token
+        dp_user_id = base64_decode(nonce)
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text="logged in as {} {}".format(dp_user_id, event.source.sender_id)))
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="logged in as {} {}".format(dp_user_id, event.source.sender_id)))
+
+    elif event.link.result == 'fail':
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="failed"))
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
     app.logger.debug("event: " + str(event))
 
-    sending_message = Dialog().dialog(event.message, event.source.sender_id)
+    sending_message = Dialog(line_bot_api).dialog(event.message, event.source.sender_id)
     line_bot_api.reply_message(event.reply_token, sending_message)
 
 
@@ -127,6 +134,15 @@ def handle_sticker_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='not support sticker'))
+
+
+def base64_decode(string):
+    """
+    Adds back in the required padding before decoding.
+    """
+    padding = 4 - (len(string) % 4)
+    string = string + ("=" * padding)
+    return base64.urlsafe_b64decode(string).decode('utf-8')
 
 
 if __name__ == "__main__":

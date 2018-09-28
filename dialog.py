@@ -8,19 +8,28 @@ from linebot.models import (
     PostbackAction, MessageAction, URIAction
 )
 
+import os
+PROVIDER_URL = os.environ.get('PROVIDER_URL', '')
+
 class Dialog(object):
 
-    def __init__(self):
+    def __init__(self, line_bot_api):
         self.user_context = None
+        self.line_bot_api = line_bot_api
 
     def dialog(self, message, user_id):
 
         received_message = message.text
-        sending_message = self.think(received_message)
+
+        linkToken = None
+        if 'ログイン' in received_message:
+            linkToken = self.line_bot_api.link_account(user_id)
+
+        sending_message = self.think(received_message, option=linkToken)
 
         return sending_message
 
-    def think(self, received_message):
+    def think(self, received_message, option=None):
         if 'ボタンテンプレート' in received_message:
             sending_message = TemplateSendMessage(
                 alt_text='Buttons template',
@@ -138,6 +147,26 @@ class Dialog(object):
                     ]
                 )
             )
+
+        elif 'ログイン' in received_message:
+            url = "{provider_url}/link_account?linkToken={link_token}".format(provider_url=PROVIDER_URL, link_token=option)
+            sending_message = TemplateSendMessage(
+                alt_text='Account Link',
+                template=ButtonsTemplate(
+                    thumbnail_image_url='https://placehold.jp/565656/100x151.png',
+                    title='Menu',
+                    text='Link your account',
+                    actions=[
+                        URIAction(
+                            label='Account Link',
+                            uri=url
+                        )
+                    ]
+                )
+            )
+
+        elif 'ログアウト' in received_message:
+            pass
 
         else:
             sending_message = TextSendMessage(received_message)
