@@ -15,6 +15,10 @@
       "LINE_CHANNEL_SECRET": {
           "description": "LINE Channel Access Secret",
           "required": true
+      },
+      "PROVIDER_URL": {
+          "description": "Your own provider server url",
+          "required": true
       }
     }
 }
