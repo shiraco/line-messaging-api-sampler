@@ -7,12 +7,12 @@ LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', '')
 import json
 import base64
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, Blueprint, current_app
 
 from linebot import (
     WebhookHandler
 )
-from line.line_api import (
+from .line.line_api import (
     LineBotLinkApi as LineBotApi
 )
 from linebot.exceptions import (
@@ -29,10 +29,12 @@ from linebot.models import (
     URIAction
 )
 
-from dialog import Dialog
+from .dialog import Dialog
 
+from flask import Blueprint
 
-app = Flask(__name__)
+app = Blueprint('bot', __name__, url_prefix='/bot')
+# app = Flask(__name__)
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
@@ -48,7 +50,7 @@ def callback():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    current_app.logger.info("Request body: " + body)
 
     # handle webhook body
     try:
@@ -61,7 +63,7 @@ def callback():
 @handler.add(FollowEvent)
 def handle_follow(event):
 
-    app.logger.debug("event: " + str(event))
+    current_app.logger.debug("event: " + str(event))
 
     rich_menu_to_create = RichMenu(
         size=RichMenuSize(width=2500, height=1686),
@@ -86,7 +88,7 @@ def handle_follow(event):
 @handler.add(AccountLinkEvent)
 def handle_account_link(event):
 
-    app.logger.debug("event: " + str(event))
+    current_app.logger.debug("event: " + str(event))
 
     if event.link.result == 'ok':
         nonce = event.link.nonce
@@ -104,7 +106,7 @@ def handle_account_link(event):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
-    app.logger.debug("event: " + str(event))
+    current_app.logger.debug("event: " + str(event))
 
     sending_message = Dialog(line_bot_api).dialog(event.message, event.source.sender_id)
     line_bot_api.reply_message(event.reply_token, sending_message)
@@ -113,7 +115,7 @@ def handle_message(event):
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
 
-    app.logger.debug("event: " + str(event))
+    current_app.logger.debug("event: " + str(event))
 
     path = './stickers.json'
     with open(path) as f:
@@ -122,7 +124,7 @@ def handle_sticker_message(event):
     stickers = [(sendables[0], sticker_id) for sendables in SENDABLE_STICKERS for sticker_id in sendables[1]]
     package_id, sticker_id = event.message.package_id, event.message.sticker_id
 
-    app.logger.debug((package_id, sticker_id))
+    current_app.logger.debug((package_id, sticker_id))
 
     if (package_id, sticker_id) in stickers:
         line_bot_api.reply_message(
@@ -143,7 +145,3 @@ def base64_decode(string):
     padding = 4 - (len(string) % 4)
     string = string + ("=" * padding)
     return base64.urlsafe_b64decode(string).decode('utf-8')
-
-
-if __name__ == "__main__":
-    app.run()
