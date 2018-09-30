@@ -25,11 +25,11 @@ class Dialog(object):
         if 'ログイン' in received_message:
             linkToken = self.line_bot_api.link_account(user_id)
 
-        sending_message = self.think(received_message, option=linkToken)
+        sending_message = self.think_reply_message(received_message, option=linkToken)
 
         return sending_message
 
-    def think(self, received_message, option=None):
+    def think_reply_message(self, received_message, option=None):
         if 'ボタンテンプレート' in received_message:
             sending_message = TemplateSendMessage(
                 alt_text='Buttons template',
