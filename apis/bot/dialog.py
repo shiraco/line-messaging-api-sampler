@@ -5,7 +5,8 @@ from linebot.models import (
     ButtonsTemplate, ConfirmTemplate,
     ImageCarouselTemplate, ImageCarouselColumn,
     CarouselTemplate, CarouselColumn,
-    PostbackAction, MessageAction, URIAction
+    PostbackAction, MessageAction, URIAction,
+    QuickReply, QuickReplyButton
 )
 
 import os
@@ -168,6 +169,23 @@ class Dialog(object):
         elif 'ログアウト' in received_message:
             pass
 
+        elif 'クイックリプライ' in received_message:
+            sending_message = TextSendMessage(text='Hello, world',
+                               quick_reply=QuickReply(items=[
+                                   QuickReplyButton(action=MessageAction(label="label01", text="text01"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=01"),
+                                   QuickReplyButton(action=MessageAction(label="label02", text="text02"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=02"),
+                                   QuickReplyButton(action=MessageAction(label="label03", text="text03"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=03"),
+                                   QuickReplyButton(action=MessageAction(label="label04", text="text04"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=04"),
+                                   QuickReplyButton(action=MessageAction(label="label05", text="text05"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=05"),
+                                   QuickReplyButton(action=MessageAction(label="label06", text="text06"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=06"),
+                                   QuickReplyButton(action=MessageAction(label="label07", text="text07"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=07"),
+                                   QuickReplyButton(action=MessageAction(label="label08", text="text08"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=08"),
+                                   QuickReplyButton(action=MessageAction(label="label09", text="text09"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=09"),
+                                   QuickReplyButton(action=MessageAction(label="label10", text="text10"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=10"),
+                                   QuickReplyButton(action=MessageAction(label="label11", text="text11"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=11"),
+                                   QuickReplyButton(action=MessageAction(label="label12", text="text12"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=12"),
+                                   QuickReplyButton(action=MessageAction(label="label13", text="text13"), image_url="https://placehold.jp/24/ffffff/000000/50x50.png?text=13")
+                                   ]))
         else:
             sending_message = TextSendMessage(received_message)
 
