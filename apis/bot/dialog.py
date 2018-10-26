@@ -6,7 +6,10 @@ from linebot.models import (
     ImageCarouselTemplate, ImageCarouselColumn,
     CarouselTemplate, CarouselColumn,
     PostbackAction, MessageAction, URIAction,
-    QuickReply, QuickReplyButton
+    QuickReply, QuickReplyButton,
+    FlexSendMessage, BubbleContainer,
+    BoxComponent, ImageComponent, TextComponent,
+    BubbleStyle, BlockStyle
 )
 
 import os
@@ -148,6 +151,49 @@ class Dialog(object):
                     ]
                 )
             )
+
+        elif 'フレックス' in received_message:
+            sending_message = FlexSendMessage(
+                alt_text='ImageCarousel template',
+                contents=BubbleContainer(
+                    header=BoxComponent(
+                        layout='vertical',
+                        contents=[
+                            TextComponent(
+                                text='header'
+                            )
+                        ]
+                    ),
+                    hero=ImageComponent(
+                        url='https://placehold.jp/ababab/1024x1024.png',
+                        size='full'
+                    ),
+                    body=BoxComponent(
+                        layout='vertical',
+                        contents=[
+                            TextComponent(
+                                text='body'
+                            )
+                        ]
+                    ),
+                    footer=BoxComponent(
+                        layout='vertical',
+                        contents=[
+                            TextComponent(
+                                text='footer'
+                            )
+                        ]
+                    ),
+                    styles=BubbleStyle(
+                        header=BlockStyle(),
+                        hero=BlockStyle(),
+                        body=BlockStyle(),
+                        footer=BlockStyle()
+                    )
+                )
+
+            )
+
 
         elif 'ログイン' in received_message:
             url = "{provider_url}/link_account?linkToken={link_token}".format(provider_url=PROVIDER_URL, link_token=option)
