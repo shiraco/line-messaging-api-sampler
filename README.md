@@ -8,10 +8,14 @@ https://line-messaging-api-sampler.herokuapp.com/
 
 ## develop (local server)
 
+```
+direnv allow
+```
+
 ### run flask
 
 ```
-export FLASK_APP=bot.py
+export FLASK_APP=app.py
 export FLASK_DEBUG=1
 flask run --host=0.0.0.0
 ```
